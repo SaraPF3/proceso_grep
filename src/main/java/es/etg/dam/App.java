@@ -16,9 +16,13 @@ public class App {
             PSP es programacion.
             """;
 
+    public static final String MSG_ERROR = "Se ha producido un error al ejecutar el comando";
+    public static final int EXIT_BIEN = 0;
+    public static final int EXIT_MAL = 1;
     public static final String COMANDO = "grep PSP";
     public static final String N = "\n";
-    public static final String TEXTO_SALIDA = "Líneas que tienen PSP: " + N + "----------------------------";
+    public static final String DECORACION = "----------------------------";
+    public static final String TEXTO_SALIDA = "Líneas que tienen PSP: " + N + DECORACION;
 
     public static void main(String[] args) throws Exception {
 
@@ -31,17 +35,23 @@ public class App {
         pw.println(TEXTO);
         pw.close();
 
-        System.out.println(TEXTO_SALIDA);
-
+		StringBuilder output = new StringBuilder();
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
         while ((linea = br.readLine()) != null) {
-            System.out.println(linea);
+            output.append(linea).append(N);
         }
 
         br.close();
 
-        p.waitFor();
+        int exitVal = p.waitFor();
 
+        if (exitVal == 0) {
+            System.out.println(TEXTO_SALIDA + N + output + DECORACION);
+            System.exit(EXIT_BIEN);
+        } else {
+            System.out.println(MSG_ERROR);
+            System.exit(EXIT_MAL);
+        }
     }
 }
