@@ -31,18 +31,19 @@ public class App {
         Process p = Runtime.getRuntime().exec(COMANDO);
         OutputStream out = p.getOutputStream();
 
-        PrintWriter pw = new PrintWriter(new OutputStreamWriter(out));
-        pw.println(TEXTO);
-        pw.close();
-
-		StringBuilder output = new StringBuilder();
-        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-        while ((linea = br.readLine()) != null) {
-            output.append(linea).append(N);
+        try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(out))) {
+            pw.println(TEXTO);
+            pw.close();
         }
+        StringBuilder output = new StringBuilder();
+        
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+            while ((linea = br.readLine()) != null) {
+                output.append(linea).append(N);
+            }
 
-        br.close();
+            br.close();
+        }
 
         int exitVal = p.waitFor();
 
